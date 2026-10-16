@@ -55,12 +55,26 @@ Flutter 畫面與桌面小工具是兩套 UI。設定頁預覽是 Flutter；桌�
 - 外部播放器狀態變動透過媒體回呼、通知訊號與短週期補查更新桌面。
 - 桌面最多顯示前 150 首以控制 Binder 傳輸大小；設定頁只保留外觀預覽與調整。
 
+## 下載與安裝
+
+發布版本的 APK 可在 [GitHub Releases](https://github.com/trent3281/MusicBridge/releases) 下載；若尚無 Release，代表尚未提供正式安裝包。GitHub 自動產生的 Source code 壓縮檔是原始碼，不能直接在手機安裝。
+
+下載 Release 附件中的 `.apk` 後，在手機開啟檔案安裝。系統可能要求允許瀏覽器或檔案管理員「安裝未知應用程式」。
+
+### Google Play 安全防護提示
+
+透過 GitHub 安裝時，Google Play 安全防護（Play Protect）可能顯示「Play 安全防護從未看過這個開發人員的應用程式」並阻擋安裝。這類提示表示 Play Protect 尚無足夠資訊判斷此應用程式；不能只憑提示認定它含有惡意程式，也不能據此保證安全。
+
+請確認 APK 來自本專案的 Release，並在提供 SHA-256 時比對下載檔案。若系統提供掃描選項，可先進行掃描，再自行決定是否繼續安裝；不需要為本專案全面關閉 Play Protect。正式簽署 APK 也不保證此提示會消失。
+
+參考：[Google Play Protect 說明](https://support.google.com/googleplay/answer/2812853?hl=zh-Hant)、[Google 對不常見應用程式的警告分類](https://developers.google.com/android/play-protect/warning-strings)。
+
 ## 手機使用
 
-1. 在手機系統設定中開啟 MusicBridge 的通知存取權。
+1. 安裝後開啟 MusicBridge，按未授權提示中的「前往開啟」，在系統設定中開啟 MusicBridge 的通知存取權。解除安裝再重裝後需要重新授權；一般的「允許通知」不等於通知存取權。若開關被系統限制，確認 APK 來源可信後，到「設定 → 應用程式 → MusicBridge」右上角選單查看「允許受限制的設定」，再返回開啟通知存取權。
 2. 第一次先在 Samsung Music 播放歌曲，讓 MusicBridge 取得有效清單。
-3. 長按桌面 → 小工具 → MusicBridge，加入桌面小工具。
-4. 在設定頁調整外觀並儲存；長按桌面小工具也可進入設定。
+3. 授權後在 MusicBridge 首頁按「新增至桌面」，並在系統確認畫面加入小工具。也可長按桌面 → 小工具 → MusicBridge 手動加入。
+4. 首頁按「小工具外觀設定」可調整外觀並儲存；長按桌面小工具開啟設定時，會直接進入外觀頁。授權與新增桌面的操作位於獨立首頁。
 5. 點頂部資訊區開啟 Samsung Music；點歌曲列則直接選曲播放。
 6. 如果背景更新延遲，從手機系統設定確認 MusicBridge 可在背景執行。
 
@@ -69,6 +83,30 @@ Flutter 畫面與桌面小工具是兩套 UI。設定頁預覽是 Flutter；桌�
 Samsung Music 在隨機模式下的內部播放順序，可能不同於對外 MediaSession 公開清單。本專案不自行洗牌冒充同步。
 離線資料只是快取；重連後會比對最新佇列，以穩定歌曲身分選曲，不使用過期 queue ID。歌曲已移除或比對有歧義時不猜測播放。
 實際通知存取權被撤銷時，仍需使用者重新開啟；離線不等於未授權。
+
+## 發布 APK 與 GitHub Release
+
+專案已支援 release 簽署，從本機 `android/key.properties` 讀取 `storeFile`、`storePassword`、`keyAlias` 與 `keyPassword`；`storeFile` 相對於 `android/` 目錄。缺少設定時會停止正式打包，避免產出未簽署 APK。其他開發環境需依 [Flutter Android 發布文件](https://docs.flutter.dev/deployment/android#sign-the-app) 準備自己的金鑰與設定；原發布者應使用備份的同一把金鑰。不要將 debug APK 當作正式發布檔案。
+
+簽署金鑰、密碼與 `android/key.properties` 不可提交至 Git。請另外備份金鑰與密碼；後續更新必須維持相同 application ID 與簽署身分，且提高 `pubspec.yaml` 中的 build number，例如 `0.1.1+2`。已安裝 debug 版的裝置改裝不同簽章的正式版時，通常需要先解除安裝，會清除該 App 的本機設定。
+
+完成簽署設定後，在專案根目錄執行：
+
+```powershell
+flutter build apk --release
+Copy-Item build/app/outputs/flutter-apk/app-release.apk build/MusicBridge-v0.1.0.apk
+Get-FileHash build/MusicBridge-v0.1.0.apk -Algorithm SHA256
+```
+
+將正式版 APK 安裝到實機，確認通知存取權、桌面小工具與播放控制正常，再發布：
+
+1. 將對應版本的程式碼 commit 並 push 至 GitHub。
+2. 在 repository 的 **Releases → Draft a new release** 建立 `v0.1.0` tag，指向對應 commit。
+3. 填寫版本名稱、功能、相容性與已知限制，並附上 APK 的 SHA-256。
+4. 上傳 `MusicBridge-v0.1.0.apk` 作為附件。測試版本可勾選 **Set as a pre-release**。
+5. 確認附件與說明後按 **Publish release**；其他人即可下載 APK 安裝。
+
+版本更新時請同步修改上述檔名與 tag。APK 放在 Release 附件即可，不必加入原始碼 Git 紀錄。操作細節見 [GitHub Release 文件](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository)。
 
 ## 建置與驗證
 

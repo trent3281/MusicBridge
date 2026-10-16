@@ -54,6 +54,8 @@ class PlaybackSnapshot {
 
   final Map<String, dynamic> _data;
   final List<QueueSong> queue;
+  // 尚未取得原生快照時為 null，避免載入中誤顯示未授權提示。
+  bool? get permission => _data['permission'] as bool?;
   String? get title => _data['title'] as String?;
   String? get artist => _data['artist'] as String?;
   bool get connected => _data['connected'] == true;

@@ -15,6 +15,12 @@
    <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE"/><action android:name="android.intent.action.CONFIGURATION_CHANGED"/><action android:name="android.intent.action.BOOT_COMPLETED"/><action android:name="android.intent.action.MY_PACKAGE_REPLACED"/></intent-filter>
    <meta-data android:name="android.appwidget.provider" android:resource="@xml/music_widget_info"/>
   </receiver>
+  <activity android:name=".WidgetSettingsActivity" android:exported="true"
+   android:theme="@style/LaunchTheme" android:hardwareAccelerated="true"
+   android:windowSoftInputMode="adjustResize"
+   android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode">
+   <meta-data android:name="io.flutter.embedding.android.NormalTheme" android:resource="@style/NormalTheme"/>
+  </activity>
   <meta-data android:name="flutterEmbedding" android:value="2"/>
  </application>
 </manifest>

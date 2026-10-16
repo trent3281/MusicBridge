@@ -13,7 +13,7 @@ import io.flutter.plugin.common.MethodChannel
  * Dart 端 MusicBridgeApi 呼叫的方法名稱，必須與下方 when 分支完全一致。
  * 媒體監聽留在 MusicListener，不依賴這個設定頁保持開啟。
  */
-class MainActivity : FlutterActivity() {
+open class MainActivity : FlutterActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)

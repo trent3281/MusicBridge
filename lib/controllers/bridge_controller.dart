@@ -25,6 +25,10 @@ class BridgeController extends ChangeNotifier {
 
   bool get canEdit => loaded && !saving;
 
+  Future<void> openNotificationSettings() => _api.openNotificationSettings();
+
+  Future<void> requestWidgetPin() => _api.requestWidgetPin();
+
   /// 頁面打開才開始輪詢；這只更新 Flutter 預覽。
   /// 桌面 Widget 的背景同步由 Android MusicListener 負責，與此 Timer 無關。
   void start() {

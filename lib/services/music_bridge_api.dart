@@ -9,6 +9,13 @@ class MusicBridgeApi {
   const MusicBridgeApi();
   static const _channel = MethodChannel('music_bridge/media');
 
+  /// 通知存取權是系統特殊存取權，需由使用者在系統頁面開啟。
+  Future<void> openNotificationSettings() =>
+      _channel.invokeMethod<void>('permission');
+
+  /// 交由 Launcher 顯示新增確認，不會自行重複建立桌面小工具。
+  Future<void> requestWidgetPin() => _channel.invokeMethod<void>('pin');
+
   Future<AppearanceSettings> loadAppearance() async {
     final map = await _channel.invokeMapMethod<String, dynamic>('appearance');
     return AppearanceSettings.fromMap(map ?? {});

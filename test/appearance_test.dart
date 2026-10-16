@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:music_bridge/app.dart';
+import 'package:music_bridge/pages/bridge_page.dart';
 import 'package:music_bridge/widgets/playback_mode_icons.dart';
 
 void main() {
@@ -32,7 +32,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(const BridgeApp());
+    await tester.pumpWidget(const MaterialApp(home: BridgePage()));
     await tester.pumpAndSettle();
     expect(tester.widget<Slider>(find.byKey(const ValueKey('opacity'))).value,
         0.6);
@@ -56,7 +56,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(const BridgeApp());
+    await tester.pumpWidget(const MaterialApp(home: BridgePage()));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('深色'));
     await tester.tap(find.text('深色'));
@@ -72,7 +72,7 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
-    await tester.pumpWidget(const BridgeApp());
+    await tester.pumpWidget(const MaterialApp(home: BridgePage()));
     await tester.pumpAndSettle();
     await tester.pumpAndSettle();
     await tester.scrollUntilVisible(find.text('外觀預覽 · 示意背景'), -250);
@@ -106,7 +106,7 @@ void main() {
         };
       return null;
     });
-    await tester.pumpWidget(const BridgeApp());
+    await tester.pumpWidget(const MaterialApp(home: BridgePage()));
     await tester.pumpAndSettle();
     const accent = Color(0xff245cb4);
     expect(
