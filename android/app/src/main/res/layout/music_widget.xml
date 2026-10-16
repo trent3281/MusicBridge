@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/widget_root" android:layout_width="match_parent" android:layout_height="match_parent">
   <ImageView android:id="@+id/background" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitXY" android:importantForAccessibility="no" />
   <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:padding="16dp" android:orientation="vertical">
     <!-- 頂部三區：左封面、右上資訊、右下五鍵；左右同為 88dp 高。 -->

@@ -88,6 +88,13 @@ object MusicWidgetRenderer {
         // 標題區明確開啟播放器；與下面「歌曲列背景點歌」是不同操作。
             ?: Intent(context, MainActivity::class.java)
         val open = PendingIntent.getActivity(context, 0, launch, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        // 消耗外框空白點擊，避免 Launcher 回退開啟所屬 App；不建立任何畫面。
+        // 子項目的播放按鈕與歌曲列仍使用各自的 PendingIntent。
+        val idle = Intent(context, MusicWidget::class.java)
+            .setAction("com.example.music_bridge.NO_OP")
+        views.setOnClickPendingIntent(R.id.widget_root,
+            PendingIntent.getBroadcast(context, 104, idle,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
         views.setOnClickPendingIntent(R.id.header, open)
         listOf(Triple(R.id.shuffle, "shuffle", 2097152L), Triple(R.id.previous, "previous", 16L), Triple(R.id.next, "next", 32L),
             Triple(R.id.toggle, "toggle", (if (playing) 2L else 4L) or 512L),

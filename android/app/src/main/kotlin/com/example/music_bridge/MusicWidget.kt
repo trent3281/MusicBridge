@@ -15,6 +15,8 @@ class MusicWidget : AppWidgetProvider() {
         updateAll(context)
     }
     override fun onReceive(context: Context, intent: Intent) {
+        // 空白處點擊只由本接收器消耗，不連線、不重畫、不啟動 Activity。
+        if (intent.action == "com.example.music_bridge.NO_OP") return
         super.onReceive(context, intent)
         if (intent.action == "com.example.music_bridge.SELECT") {
             // 等待播放器恢復時暫時保留廣播，完成或取消都必須 finish。
