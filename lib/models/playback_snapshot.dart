@@ -2,11 +2,7 @@
 /// 點歌要傳 mediaId/uri 等歌曲身分，不能沿用快取中的舊 queueId。
 class QueueSong {
   const QueueSong(
-      {this.id,
-      this.mediaId,
-      this.uri,
-      this.title = '未命名歌曲',
-      this.artist = ''});
+      {this.id, this.mediaId, this.uri, this.title = '', this.artist = ''});
 
   final int? id;
   final String? mediaId;
@@ -18,7 +14,7 @@ class QueueSong {
         id: (map['id'] as num?)?.toInt(),
         mediaId: map['mediaId'] as String?,
         uri: map['uri'] as String?,
-        title: map['title'] as String? ?? '未命名歌曲',
+        title: map['title'] as String? ?? '',
         artist: map['artist'] as String? ?? '',
       );
 

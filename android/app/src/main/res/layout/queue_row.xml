@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/row" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:paddingTop="5dp" android:paddingBottom="5dp" android:orientation="horizontal" android:gravity="top">
   <!-- 目前歌曲才顯示三角形；其他列用 invisible 保留位置，避免文字左右跳動。 -->
-  <ImageView android:id="@+id/row_indicator" android:layout_width="13dp" android:layout_height="22dp" android:layout_marginEnd="15dp" android:scaleType="fitCenter" android:src="@drawable/ic_play" android:visibility="invisible" android:contentDescription="目前播放" />
+  <ImageView android:id="@+id/row_indicator" android:layout_width="13dp" android:layout_height="22dp" android:layout_marginEnd="15dp" android:scaleType="fitCenter" android:src="@drawable/ic_play" android:visibility="invisible" android:contentDescription="@string/now_playing" />
   <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:orientation="vertical">
     <!-- 桌面歌曲列的文字樣式；實際字級與顏色也會由 MusicWidgetRenderer 設定。 -->
     <TextView android:id="@+id/row_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="17sp" android:maxLines="1" android:ellipsize="end" />

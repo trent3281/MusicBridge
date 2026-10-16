@@ -7,6 +7,10 @@ void main() {
   const channel = MethodChannel('music_bridge/media');
   testWidgets('authorization gates pinning and settings stays separate',
       (tester) async {
+    tester.binding.platformDispatcher.localesTestValue = [
+      const Locale('zh', 'TW')
+    ];
+    addTearDown(tester.binding.platformDispatcher.clearLocalesTestValue);
     var permission = false;
     final calls = <String>[];
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger

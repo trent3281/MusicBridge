@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="repeat_one">1曲リピート</string>
+    <string name="repeat_all">全曲リピート</string>
+    <string name="play_once">全曲を1回再生</string>
+    <string name="shuffle_off">シャッフル オフ</string>
+    <string name="shuffle_on">シャッフル オン</string>
+    <string name="shuffle_unknown">シャッフルの状態を取得できません</string>
+    <string name="start_music">Samsung Music を開いて曲を再生してください</string>
+    <string name="open_music">Samsung Music を開く</string>
+    <string name="repeat_unknown">リピートモードを取得できません</string>
+    <string name="play">再生</string>
+    <string name="pause">一時停止</string>
+    <string name="previous">前の曲</string>
+    <string name="next">次の曲</string>
+    <string name="shuffle">シャッフル</string>
+    <string name="toggle">再生／一時停止</string>
+    <string name="repeat">リピートモード</string>
+    <string name="now_playing">再生中</string>
+    <string name="empty_permission">曲を同期するには、通知へのアクセスを許可してください</string>
+    <string name="empty_public">Samsung Music から再生キューが提供されていません</string>
+    <string name="empty_cache">保存された再生キューがありません。Samsung Music で曲を再生してください。</string>
+    <string name="cached_header">前回の再生キュー。Samsung Music を開きます。</string>
+    <string name="unknown_song">タイトルなし</string>
+    <string name="music_missing">Samsung Music がインストールされていません</string>
+    <string name="pin_manual">ホーム画面を長押しして、ウィジェット一覧から MusicBridge を追加してください。</string>
+    <string name="permission_required">先に MusicBridge の通知へのアクセスを許可してください</string>
+    <string name="background_missing">Samsung Music のバックグラウンド再生を開始できません</string>
+    <string name="background_error">バックグラウンドで曲を再生できませんでした</string>
+    <string name="background_timeout">接続または曲の取得に失敗しました。Samsung Music の現在の再生キューを確認してください。</string>
+    <string name="not_connected">Samsung Music に接続していません</string>
+    <string name="unsupported_action">Samsung Music はこの操作に対応していません</string>
+    <string name="session_wait">再生サービスの準備ができていません。しばらくしてからお試しください。</string>
+    <string name="no_controls">再生操作を利用できません</string>
+    <string name="song_removed">この曲は現在の再生キューにありません。更新してお試しください。</string>
+    <string name="listener_label">MusicBridge メディア接続</string>
+    <string name="widget_label">MusicBridge 再生キュー</string>
+    <string name="song_count">%1$d 曲</string>
+    <string name="current_count">現在の再生キュー、%1$d 曲</string>
+    <string name="cached_count">前回の再生キュー、%1$d 曲</string>
+    <plurals name="queue_song_count"><item quantity="other">%1$d 曲</item></plurals>
+</resources>

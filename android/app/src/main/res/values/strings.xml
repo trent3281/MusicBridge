@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="repeat_one">Repeat one</string>
+    <string name="repeat_all">Repeat all</string>
+    <string name="play_once">Play all once</string>
+    <string name="shuffle_off">Shuffle off</string>
+    <string name="shuffle_on">Shuffle on</string>
+    <string name="shuffle_unknown">Shuffle status unavailable</string>
+    <string name="start_music">Open Samsung Music and play a song</string>
+    <string name="open_music">Open Samsung Music</string>
+    <string name="repeat_unknown">Repeat mode unavailable</string>
+    <string name="play">Play</string>
+    <string name="pause">Pause</string>
+    <string name="previous">Previous track</string>
+    <string name="next">Next track</string>
+    <string name="shuffle">Shuffle</string>
+    <string name="toggle">Play or pause</string>
+    <string name="repeat">Repeat mode</string>
+    <string name="now_playing">Now playing</string>
+    <string name="empty_permission">Enable notification access to sync songs</string>
+    <string name="empty_public">Samsung Music has not shared its playback queue</string>
+    <string name="empty_cache">No saved queue. Play a song in Samsung Music to get started.</string>
+    <string name="cached_header">Last playback queue. Open Samsung Music.</string>
+    <string name="unknown_song">Untitled track</string>
+    <string name="music_missing">Samsung Music is not installed</string>
+    <string name="pin_manual">Touch and hold your home screen and add MusicBridge from Widgets</string>
+    <string name="permission_required">Enable notification access for MusicBridge first</string>
+    <string name="background_missing">Samsung Music has no available background playback entry point</string>
+    <string name="background_error">Could not play the song in the background</string>
+    <string name="background_timeout">Could not connect or find this song. Check the current queue in Samsung Music.</string>
+    <string name="not_connected">Samsung Music is not connected</string>
+    <string name="unsupported_action">Samsung Music does not support this action</string>
+    <string name="session_wait">Media session is not ready. Please try again.</string>
+    <string name="no_controls">Playback controls are unavailable</string>
+    <string name="song_removed">This song is no longer in the current queue. Refresh and try again.</string>
+    <string name="listener_label">MusicBridge media connection</string>
+    <string name="widget_label">MusicBridge playback queue</string>
+    <string name="song_count">%1$d songs</string>
+    <string name="current_count">Current playback queue, %1$d songs</string>
+    <string name="cached_count">Last playback queue, %1$d songs</string>
+</resources>

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import '../l10n/strings.dart';
 import '../models/appearance_settings.dart';
 import '../models/playback_snapshot.dart';
 import 'playback_mode_icons.dart';
@@ -33,9 +34,9 @@ class AppearancePreviewCard extends StatelessWidget {
                   Color(0xffd2b6a4)
                 ])),
         child: Column(children: [
-          const Align(
+          Align(
               alignment: Alignment.centerRight,
-              child: Text('外觀預覽 · 示意背景',
+              child: Text(context.strings.preview,
                   style: TextStyle(fontSize: 11, color: Colors.white))),
           const SizedBox(height: 14),
           MusicPreview(
@@ -91,7 +92,7 @@ class MusicPreview extends StatelessWidget {
             if (demo)
               Padding(
                   padding: const EdgeInsets.only(top: 8),
-                  child: Text('示範歌曲 · 桌面只顯示真實播放佇列',
+                  child: Text(context.strings.demoQueue,
                       style:
                           TextStyle(fontSize: 10, color: palette.secondary))),
           ])),
@@ -210,7 +211,7 @@ class _PreviewSongRow extends StatelessWidget {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                Text(song.title,
+                Text(song.title.isEmpty ? context.strings.untitled : song.title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/strings.dart';
 
 /// 只負責外觀的白色圓角容器。child 由呼叫端決定，方便組合不同設定。
 class SettingsCard extends StatelessWidget {
@@ -27,9 +28,9 @@ class BackgroundColorCard extends StatelessWidget {
           child: Column(children: [
         // record（紀錄）把設定值與顯示文字配成一組；$1/$2 分別取第一/二欄。
         for (final choice in [
-          ('system', '與手機設定同步'),
-          ('light', '淺色'),
-          ('dark', '深色')
+          ('system', context.strings.followSystem),
+          ('light', context.strings.light),
+          ('dark', context.strings.dark)
         ])
           Material(
               type: MaterialType.transparency,
@@ -65,7 +66,7 @@ class OpacityCard extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
         child: Column(children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text('不透明度',
+            Text(context.strings.opacity,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             Text('${(opacity * 100).round()}%',
                 style: const TextStyle(color: Color(0xff387af3))),
@@ -79,14 +80,12 @@ class OpacityCard extends StatelessWidget {
               label: '${(opacity * 100).round()}%',
               // onChanged 設為 null 是 Flutter 元件停用的標準方式。
               onChanged: enabled ? onChanged : null),
-          const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('完全透明',
-                    style: TextStyle(fontSize: 11, color: Colors.grey)),
-                Text('完全不透明',
-                    style: TextStyle(fontSize: 11, color: Colors.grey)),
-              ]),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text(context.strings.transparent,
+                style: TextStyle(fontSize: 11, color: Colors.grey)),
+            Text(context.strings.opaque,
+                style: TextStyle(fontSize: 11, color: Colors.grey)),
+          ]),
           const SizedBox(height: 8),
         ]),
       ));
@@ -112,13 +111,14 @@ class AppearanceActionBar extends StatelessWidget {
           Expanded(
               child: TextButton(
                   onPressed: enabled ? onCancel : null,
-                  child: const Text('取消',
+                  child: Text(context.strings.cancel,
                       style: TextStyle(
                           fontSize: 18, fontWeight: FontWeight.bold)))),
           Expanded(
               child: FilledButton(
                   onPressed: enabled ? onSave : null,
-                  child: Text(saving ? '儲存中…' : '儲存',
+                  child: Text(
+                      saving ? context.strings.saving : context.strings.save,
                       style: const TextStyle(
                           fontSize: 18, fontWeight: FontWeight.bold)))),
         ]),

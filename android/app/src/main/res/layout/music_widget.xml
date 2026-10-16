@@ -3,7 +3,7 @@
   <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:padding="16dp" android:orientation="vertical">
     <!-- 頂部三區：左封面、右上資訊、右下五鍵；左右同為 88dp 高。 -->
     <LinearLayout android:id="@+id/header" android:layout_width="match_parent" android:layout_height="88dp" android:gravity="top">
-      <ImageView android:id="@+id/music_icon" android:layout_width="88dp" android:layout_height="88dp" android:scaleType="fitCenter" android:src="@drawable/ic_music" android:contentDescription="開啟 Samsung Music" />
+      <ImageView android:id="@+id/music_icon" android:layout_width="88dp" android:layout_height="88dp" android:scaleType="fitCenter" android:src="@drawable/ic_music" android:contentDescription="@string/open_music" />
       <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="match_parent" android:layout_marginStart="12dp" android:orientation="vertical">
         <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:orientation="vertical" android:gravity="top">
           <!-- 桌面跑馬燈：單行、水平捲動、無限循環，透過焦點啟動；只在超寬時捲動。 -->
@@ -13,11 +13,11 @@
           <TextView android:id="@+id/artist" android:layout_width="match_parent" android:layout_height="wrap_content" android:includeFontPadding="false" android:textSize="14sp" android:textColor="#CCFFFFFF" android:maxLines="1" android:ellipsize="end" />
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="48dp">
-          <ImageButton android:id="@+id/shuffle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:padding="8dp" android:scaleType="fitCenter" android:background="?android:attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_shuffle" android:contentDescription="隨機播放" />
-          <ImageButton android:id="@+id/previous" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:padding="8dp" android:scaleType="fitCenter" android:background="?android:attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_previous" android:contentDescription="上一首" />
-          <ImageButton android:id="@+id/toggle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:padding="8dp" android:scaleType="fitCenter" android:background="?android:attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_play" android:contentDescription="播放或暫停" />
-          <ImageButton android:id="@+id/next" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:padding="8dp" android:scaleType="fitCenter" android:background="?android:attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_next" android:contentDescription="下一首" />
-          <ImageButton android:id="@+id/repeat" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:padding="8dp" android:scaleType="fitCenter" android:background="?android:attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_repeat" android:contentDescription="循環模式" />
+          <ImageButton android:id="@+id/shuffle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:padding="8dp" android:scaleType="fitCenter" android:background="?android:attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_shuffle" android:contentDescription="@string/shuffle" />
+          <ImageButton android:id="@+id/previous" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:padding="8dp" android:scaleType="fitCenter" android:background="?android:attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_previous" android:contentDescription="@string/previous" />
+          <ImageButton android:id="@+id/toggle" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:padding="8dp" android:scaleType="fitCenter" android:background="?android:attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_play" android:contentDescription="@string/toggle" />
+          <ImageButton android:id="@+id/next" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:padding="8dp" android:scaleType="fitCenter" android:background="?android:attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_next" android:contentDescription="@string/next" />
+          <ImageButton android:id="@+id/repeat" android:layout_width="0dp" android:layout_weight="1" android:layout_height="48dp" android:padding="8dp" android:scaleType="fitCenter" android:background="?android:attr/selectableItemBackgroundBorderless" android:src="@drawable/ic_repeat" android:contentDescription="@string/repeat" />
         </LinearLayout>
       </LinearLayout>
     </LinearLayout>

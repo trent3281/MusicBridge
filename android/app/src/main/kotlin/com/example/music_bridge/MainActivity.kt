@@ -77,7 +77,7 @@ open class MainActivity : FlutterActivity() {
                     }
                     "launch" -> {
                         val launch = packageManager.getLaunchIntentForPackage(Bridge.PACKAGE)
-                        if (launch == null) result.error("NOT_INSTALLED", "找不到 Samsung Music", null)
+                        if (launch == null) result.error("NOT_INSTALLED", getString(R.string.music_missing), null)
                         else { startActivity(launch); result.success(null) }
                     }
                     "pin" -> {
@@ -85,7 +85,7 @@ open class MainActivity : FlutterActivity() {
                         if (manager.isRequestPinAppWidgetSupported) {
                             manager.requestPinAppWidget(ComponentName(this, MusicWidget::class.java), null, null)
                             result.success(null)
-                        } else result.error("PIN_UNSUPPORTED", "請長按桌面，從小工具清單加入 MusicBridge", null)
+                        } else result.error("PIN_UNSUPPORTED", getString(R.string.pin_manual), null)
                     }
                     "opacity" -> {
                         val value = call.argument<Number>("value")?.toFloat() ?: 0.88f

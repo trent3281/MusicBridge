@@ -30,7 +30,7 @@ class MusicWidget : AppWidgetProvider() {
             Bridge.connect()
             updateAll(context)
         }
-        if (intent.action == Intent.ACTION_CONFIGURATION_CHANGED) updateAll(context)
+        if (intent.action == Intent.ACTION_CONFIGURATION_CHANGED || intent.action == Intent.ACTION_LOCALE_CHANGED) updateAll(context)
         if (intent.action == "com.example.music_bridge.CONTROL") {
             Bridge.init(context)
             try { Bridge.command(intent.getStringExtra("command") ?: "", if (intent.hasExtra("id")) intent.getLongExtra("id", -1) else null) }

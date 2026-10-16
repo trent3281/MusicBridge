@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/strings.dart';
 
 /// Samsung 模式值對應文字；未知值不能當成關閉。
 /// switch expression 回傳符合條件的結果，2 || 3 表示兩種值共用結果。
@@ -22,7 +23,11 @@ class ShuffleModeIcon extends StatelessWidget {
   final double size;
   @override
   Widget build(BuildContext context) => Semantics(
-        label: shuffleModeLabel(mode),
+        label: switch (mode) {
+          0 => context.strings.shuffleOff,
+          1 || 2 => context.strings.shuffleOn,
+          _ => context.strings.shuffleUnknown,
+        },
         excludeSemantics: true,
         child: SizedBox(
             width: size,
@@ -65,7 +70,12 @@ class PlaybackModeIcon extends StatelessWidget {
   final double size;
   @override
   Widget build(BuildContext context) => Semantics(
-        label: playbackModeLabel(mode),
+        label: switch (mode) {
+          1 => context.strings.repeatOne,
+          2 || 3 => context.strings.repeatAll,
+          0 => context.strings.playOnce,
+          _ => context.strings.repeatUnknown,
+        },
         excludeSemantics: true,
         child: SizedBox(
             width: size,

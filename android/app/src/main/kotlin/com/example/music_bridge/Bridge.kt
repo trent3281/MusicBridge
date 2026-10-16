@@ -256,14 +256,14 @@ object Bridge {
     fun command(action: String, id: Long? = null) {
         if (action == "inspect") { inspect(); return }
         connect()
-        val c = controller ?: error("Samsung Music 尚未連線")
+        val c = controller ?: error(context.getString(R.string.not_connected))
         val controls = c.transportControls
         val actions = c.playbackState?.actions ?: 0L
-        fun requireAction(flag: Long) { check(actions and flag != 0L) { "Samsung Music 未公開此操作" } }
+        fun requireAction(flag: Long) { check(actions and flag != 0L) { context.getString(R.string.unsupported_action) } }
         when (action) {
             "shuffle" -> {
                 requireAction(PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE)
-                check(c.isSessionReady) { "媒體連線尚未就緒，請稍後再試" }
+                check(c.isSessionReady) { context.getString(R.string.session_wait) }
                 val target = if (c.shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL ||
                     c.shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_GROUP)
                     PlaybackStateCompat.SHUFFLE_MODE_NONE else PlaybackStateCompat.SHUFFLE_MODE_ALL
@@ -278,12 +278,12 @@ object Bridge {
             "toggle" -> {
                 val playing = c.playbackState?.state == PlaybackStateCompat.STATE_PLAYING
                 val flag = if (playing) PlaybackStateCompat.ACTION_PAUSE else PlaybackStateCompat.ACTION_PLAY
-                check(actions and (flag or PlaybackStateCompat.ACTION_PLAY_PAUSE) != 0L) { "播放器未提供播放控制" }
+                check(actions and (flag or PlaybackStateCompat.ACTION_PLAY_PAUSE) != 0L) { context.getString(R.string.no_controls) }
                 if (playing) controls.pause() else controls.play()
             }
             "queue" -> {
                 requireAction(PlaybackStateCompat.ACTION_SKIP_TO_QUEUE_ITEM)
-                check(id != null && c.queue?.any { it.queueId == id } == true) { "歌曲已不在目前佇列，請重新整理" }
+                check(id != null && c.queue?.any { it.queueId == id } == true) { context.getString(R.string.song_removed) }
                 controls.skipToQueueItem(id!!)
             }
             "repeat" -> {

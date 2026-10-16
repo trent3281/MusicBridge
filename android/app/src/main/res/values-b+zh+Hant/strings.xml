@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="repeat_one">單曲循環</string>
+    <string name="repeat_all">全部循環</string>
+    <string name="play_once">全部播放一次</string>
+    <string name="shuffle_off">隨機播放關閉</string>
+    <string name="shuffle_on">隨機播放開啟</string>
+    <string name="shuffle_unknown">隨機播放狀態未公開</string>
+    <string name="start_music">開啟 Samsung Music 並播放歌曲</string>
+    <string name="open_music">開啟 Samsung Music</string>
+    <string name="repeat_unknown">循環模式未公開</string>
+    <string name="play">播放</string>
+    <string name="pause">暫停</string>
+    <string name="previous">上一首</string>
+    <string name="next">下一首</string>
+    <string name="shuffle">隨機播放</string>
+    <string name="toggle">播放或暫停</string>
+    <string name="repeat">循環模式</string>
+    <string name="now_playing">目前播放</string>
+    <string name="empty_permission">請開啟通知存取權以同步歌曲</string>
+    <string name="empty_public">Samsung Music 未公開播放佇列</string>
+    <string name="empty_cache">尚無已儲存清單；在 Samsung Music 播放一次即可</string>
+    <string name="cached_header">上次播放清單；點擊開啟 Samsung Music</string>
+    <string name="unknown_song">未命名歌曲</string>
+    <string name="music_missing">找不到 Samsung Music</string>
+    <string name="pin_manual">請長按桌面，從小工具清單加入 MusicBridge</string>
+    <string name="permission_required">請先開啟 MusicBridge 通知存取權</string>
+    <string name="background_missing">Samsung Music 沒有可用的背景播放入口</string>
+    <string name="background_error">無法在背景播放歌曲</string>
+    <string name="background_timeout">未能在背景連線或找到這首歌，請確認 Samsung Music 的目前清單</string>
+    <string name="not_connected">Samsung Music 尚未連線</string>
+    <string name="unsupported_action">Samsung Music 未公開此操作</string>
+    <string name="session_wait">媒體連線尚未就緒，請稍後再試</string>
+    <string name="no_controls">播放器未提供播放控制</string>
+    <string name="song_removed">歌曲已不在目前佇列，請重新整理</string>
+    <string name="listener_label">MusicBridge 媒體連線</string>
+    <string name="widget_label">MusicBridge 播放清單</string>
+    <string name="song_count">%1$d 首</string>
+    <string name="current_count">目前播放清單，共 %1$d 首</string>
+    <string name="cached_count">上次播放清單，共 %1$d 首</string>
+</resources>

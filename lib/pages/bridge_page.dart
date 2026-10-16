@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/strings.dart';
 import '../controllers/bridge_controller.dart';
 import '../widgets/appearance_controls.dart';
 import '../widgets/music_preview.dart';
@@ -45,9 +46,9 @@ class _BridgePageState extends State<BridgePage> with WidgetsBindingObserver {
   Future<void> _save() async {
     try {
       await _controller.save();
-      _showMessage('已儲存，桌面小工具已更新');
+      _showMessage(context.strings.saved);
     } catch (e) {
-      _showMessage('儲存失敗：$e');
+      _showMessage('${context.strings.saveError}: $e');
     }
   }
 
@@ -57,7 +58,7 @@ class _BridgePageState extends State<BridgePage> with WidgetsBindingObserver {
         // 這裡監聽 ChangeNotifier，效果相當於原本在頁面呼叫 setState。
         animation: _controller,
         builder: (context, child) => Scaffold(
-          appBar: AppBar(title: const Text('MusicBridge')),
+          appBar: AppBar(title: Text('MusicBridge')),
           bottomNavigationBar: AppearanceActionBar(
               enabled: _controller.canEdit,
               saving: _controller.saving,
@@ -67,11 +68,11 @@ class _BridgePageState extends State<BridgePage> with WidgetsBindingObserver {
           body: ListView(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
               children: [
-                const Text('小工具外觀',
+                Text(context.strings.appearanceTitle,
                     style:
                         TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 6),
-                const Text('調整背景，讓音樂融入你的桌面。',
+                Text(context.strings.appearanceSubtitle,
                     style: TextStyle(color: Color(0xff666872))),
                 const SizedBox(height: 22),
                 AppearancePreviewCard(
@@ -79,12 +80,12 @@ class _BridgePageState extends State<BridgePage> with WidgetsBindingObserver {
                     snapshot: _controller.snapshot,
                     artwork: _controller.artwork),
                 const SizedBox(height: 10),
-                const Text('背景會透出你自己的桌布；預覽圖片僅為示意。',
+                Text(context.strings.wallpaperHint,
                     style: TextStyle(fontSize: 12, color: Color(0xff737680))),
                 const SizedBox(height: 26),
-                const Padding(
+                Padding(
                     padding: EdgeInsets.only(left: 12, bottom: 10),
-                    child: Text('背景色彩',
+                    child: Text(context.strings.backgroundColor,
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold))),
                 BackgroundColorCard(
@@ -96,17 +97,17 @@ class _BridgePageState extends State<BridgePage> with WidgetsBindingObserver {
                     opacity: _controller.draft.opacity,
                     enabled: _controller.canEdit,
                     onChanged: _controller.changeOpacity),
-                const Padding(
+                Padding(
                     padding: EdgeInsets.fromLTRB(12, 10, 12, 20),
-                    child: Text('儲存後套用至所有 MusicBridge 小工具。',
+                    child: Text(context.strings.applyAll,
                         style: TextStyle(fontSize: 12, color: Colors.grey))),
                 // collection-if：只有發生錯誤才把這兩個 Widget 加進 children。
                 if (_controller.error != null) ...[
-                  Text(_controller.error!,
+                  Text(context.strings.loadError,
                       style: const TextStyle(color: Colors.red)),
                   TextButton(
                       onPressed: _controller.loadAppearance,
-                      child: const Text('重試載入外觀')),
+                      child: Text(context.strings.retryAppearance)),
                 ],
               ]),
         ),

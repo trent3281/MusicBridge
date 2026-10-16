@@ -71,6 +71,8 @@ Flutter 畫面與桌面小工具是兩套 UI。設定頁預覽是 Flutter；桌�
 
 ## 手機使用
 
+App 與桌面 Widget 自動跟隨系統語言，支援繁體中文、簡體中文、英文、日文與韓文；系統偏好語言皆不支援時使用英文。沒有獨立的語言切換按鈕。歌曲與演出者名稱保留 Samsung Music 提供的原文。
+
 1. 安裝後開啟 MusicBridge，按未授權提示中的「前往開啟」，在系統設定中開啟 MusicBridge 的通知存取權。解除安裝再重裝後需要重新授權；一般的「允許通知」不等於通知存取權。若開關被系統限制，確認 APK 來源可信後，到「設定 → 應用程式 → MusicBridge」右上角選單查看「允許受限制的設定」，再返回開啟通知存取權。
 2. 第一次先在 Samsung Music 播放歌曲，讓 MusicBridge 取得有效清單。
 3. 授權後在 MusicBridge 首頁按「新增至桌面」，並在系統確認畫面加入小工具。也可長按桌面 → 小工具 → MusicBridge 手動加入。
@@ -109,6 +111,8 @@ Get-FileHash build/MusicBridge-v0.1.0.apk -Algorithm SHA256
 版本更新時請同步修改上述檔名與 tag。APK 放在 Release 附件即可，不必加入原始碼 Git 紀錄。操作細節見 [GitHub Release 文件](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository)。
 
 ## 建置與驗證
+
+Flutter 翻譯來源位於 `lib/l10n/app_*.arb`，Android Widget 翻譯位於 `android/app/src/main/res/values*/strings.xml`。修改 ARB 後執行 `flutter gen-l10n` 重新產生 Dart 類別；新增語言需同步更新 Flutter 與 Android 資源。
 
 App 圖示原圖放在 `assets/icons/app_icon.png`。替換原圖後執行：
 

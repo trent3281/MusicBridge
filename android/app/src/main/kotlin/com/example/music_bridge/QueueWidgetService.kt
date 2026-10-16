@@ -64,7 +64,7 @@ class QueueWidgetService : RemoteViewsService() {
                 setImageViewResource(R.id.row_indicator, R.drawable.ic_queue_play)
                 setInt(R.id.row_indicator, "setColorFilter", state.accent)
                 setViewVisibility(R.id.row_indicator, if (active) View.VISIBLE else View.INVISIBLE)
-                setTextViewText(R.id.row_title, item["title"] as? String ?: "未命名歌曲")
+                setTextViewText(R.id.row_title, item["title"] as? String ?: getString(R.string.unknown_song))
                 setTextViewText(R.id.row_artist, item["artist"] as? String ?: "")
                 setTextColor(R.id.row_title, if (active) state.accent else state.foreground)
                 setTextColor(R.id.row_artist, if (active) state.accent else state.secondary)

@@ -31,7 +31,7 @@ object MusicWidgetRenderer {
         val repeat = state["repeat"] as Int
         val views = RemoteViews(context.packageName, R.layout.music_widget)
         views.setTextViewText(R.id.title, state["title"] as String? ?: "Samsung Music")
-        views.setTextViewText(R.id.artist, state["artist"] as String? ?: "開啟 Samsung Music 並播放歌曲")
+        views.setTextViewText(R.id.artist, state["artist"] as String? ?: context.getString(R.string.start_music))
         val prefs = context.getSharedPreferences("widget", Context.MODE_PRIVATE)
         // 設定由 Flutter 儲存到原生；Widget 不必啟動 Flutter 引擎就能讀取。
         val mode = prefs.getString("mode", "dark")
@@ -47,10 +47,10 @@ object MusicWidgetRenderer {
         views.setTextColor(R.id.artist, secondary)
         views.setTextColor(R.id.empty, secondary)
         val songCount = (state["queue"] as? List<*>)?.size ?: 0
-        views.setTextViewText(R.id.queue_count, "$songCount 首")
+        views.setTextViewText(R.id.queue_count, context.resources.getQuantityString(R.plurals.queue_song_count, songCount, songCount))
         views.setTextColor(R.id.queue_count, secondary)
         views.setContentDescription(R.id.queue_count,
-            if (state["cached"] == true) "上次播放清單，共 $songCount 首" else "目前播放清單，共 $songCount 首")
+            if (state["cached"] == true) context.getString(R.string.cached_count, songCount) else context.getString(R.string.current_count, songCount))
         // 圖示先畫成帶顏色的 Bitmap，避免不同 Launcher 對 tint 支援不一致。
         fun icon(id: Int, drawable: Int, color: Int = foreground) {
             val asset = context.getDrawable(drawable)!!.mutate()
@@ -72,9 +72,9 @@ object MusicWidgetRenderer {
         val shuffle = state["shuffle"] as Int
         icon(R.id.shuffle, if (shuffle == 0) R.drawable.ic_shuffle_off else R.drawable.ic_shuffle)
         views.setContentDescription(R.id.shuffle, when (shuffle) {
-            0 -> "隨機播放關閉"
-            1, 2 -> "隨機播放開啟"
-            else -> "隨機播放狀態未公開"
+            0 -> context.getString(R.string.shuffle_off)
+            1, 2 -> context.getString(R.string.shuffle_on)
+            else -> context.getString(R.string.shuffle_unknown)
         })
         icon(R.id.repeat, when (repeat) {
             1 -> R.drawable.ic_repeat_one
@@ -82,8 +82,8 @@ object MusicWidgetRenderer {
             0 -> R.drawable.ic_play_once
             else -> R.drawable.ic_repeat
         })
-        views.setContentDescription(R.id.repeat, when (repeat) { 1 -> "單曲循環"; 2, 3 -> "全部循環"; 0 -> "全部播放一次"; else -> "循環模式未公開" })
-        views.setContentDescription(R.id.toggle, if (playing) "暫停" else "播放")
+        views.setContentDescription(R.id.repeat, when (repeat) { 1 -> context.getString(R.string.repeat_one); 2, 3 -> context.getString(R.string.repeat_all); 0 -> context.getString(R.string.play_once); else -> context.getString(R.string.repeat_unknown) })
+        views.setContentDescription(R.id.toggle, if (playing) context.getString(R.string.pause) else context.getString(R.string.play))
         val launch = context.packageManager.getLaunchIntentForPackage(Bridge.PACKAGE)
         // 標題區明確開啟播放器；與下面「歌曲列背景點歌」是不同操作。
             ?: Intent(context, MainActivity::class.java)
@@ -108,13 +108,13 @@ object MusicWidgetRenderer {
             PendingIntent.getBroadcast(context, 103, template, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE))
         views.setEmptyView(R.id.queue, R.id.empty)
         views.setTextViewText(R.id.empty, when {
-            state["permission"] != true -> "請開啟通知存取權以同步歌曲"
-            connected -> "Samsung Music 未公開播放佇列"
-            else -> "尚無已儲存清單；在 Samsung Music 播放一次即可"
+            state["permission"] != true -> context.getString(R.string.empty_permission)
+            connected -> context.getString(R.string.empty_public)
+            else -> context.getString(R.string.empty_cache)
         })
         views.setContentDescription(R.id.header, if (state["cached"] == true)
-            "上次播放清單；點擊開啟 Samsung Music" else "開啟 Samsung Music")
-        if (!connected) views.setContentDescription(R.id.toggle, "開啟 Samsung Music")
+            context.getString(R.string.cached_header) else context.getString(R.string.open_music))
+        if (!connected) views.setContentDescription(R.id.toggle, context.getString(R.string.open_music))
         ids.forEach { id ->
             // 每個 Widget 尺寸可能不同；依 Launcher 提供的尺寸畫圓角透明背景。
             val options = manager.getAppWidgetOptions(id)

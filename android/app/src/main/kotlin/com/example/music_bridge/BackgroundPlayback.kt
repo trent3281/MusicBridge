@@ -37,7 +37,7 @@ object BackgroundPlayback {
             } finally { done?.invoke() }
         }
         if (!Bridge.permission()) {
-            finish("請先開啟 MusicBridge 通知存取權")
+            finish(app.getString(R.string.permission_required))
             return
         }
         val started = SystemClock.elapsedRealtime()
@@ -46,7 +46,7 @@ object BackgroundPlayback {
             override fun run() {
                 // 先檢查期限，再嘗試播放，避免被系統延後的工作突然播放。
                 if (SystemClock.elapsedRealtime() - started >= 8000) {
-                    finish("未能在背景連線或找到這首歌，請確認 Samsung Music 的目前清單")
+                    finish(app.getString(R.string.background_timeout))
                     return
                 }
                 try {
@@ -58,7 +58,7 @@ object BackgroundPlayback {
                         @Suppress("DEPRECATION")
                         val receiver = app.packageManager.queryBroadcastReceivers(query, 0)
                             .firstOrNull { it.activityInfo.exported && it.activityInfo.permission.isNullOrEmpty() }
-                        if (receiver == null) { finish("Samsung Music 沒有可用的背景播放入口"); return }
+                        if (receiver == null) { finish(app.getString(R.string.background_missing)); return }
                         for (action in listOf(KeyEvent.ACTION_DOWN, KeyEvent.ACTION_UP)) {
                             app.sendBroadcast(Intent(query)
                                 .setClassName(receiver.activityInfo.packageName, receiver.activityInfo.name)
@@ -67,7 +67,7 @@ object BackgroundPlayback {
                         }
                     }
                     handler.postDelayed(this, 200)
-                } catch (e: Exception) { finish(e.message ?: "無法在背景播放歌曲") }
+                } catch (e: Exception) { finish(e.message ?: app.getString(R.string.background_error)) }
             }
         }
         pending = attempt
