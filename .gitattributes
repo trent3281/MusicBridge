@@ -1,0 +1,11 @@
+# 原始碼統一使用 LF，避免不同作業系統造成整份檔案的換行差異。
+* text=auto eol=lf
+
+# Windows 批次檔使用 CRLF；Unix Gradle 啟動檔維持 LF。
+*.bat text eol=crlf
+*.cmd text eol=crlf
+/android/gradlew text eol=lf
+
+# 圖片與 Gradle wrapper JAR 不進行文字換行轉換。
+*.png binary
+*.jar binary

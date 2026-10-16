@@ -1,0 +1,12 @@
+# Gradle wrapper 啟動檔與 JAR 需納入版本控制，讓下載專案後能直接建置。
+/.gradle
+/captures/
+/local.properties
+GeneratedPluginRegistrant.java
+.cxx/
+
+# Remember to never publicly share your keystore.
+# See https://flutter.dev/to/reference-keystore
+key.properties
+**/*.keystore
+**/*.jks

@@ -1,0 +1,39 @@
+# Flutter / Dart 產物與工具快取
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# 建置與測試產物；測試截圖、診斷 JSON、建置日誌均存放在 build/
+build/
+coverage/
+*.apk
+*.aab
+
+# Android 本機設定、原生編譯快取與 Flutter 安裝套件輸出
+android/local.properties
+android/.gradle/
+android/.kotlin/
+android/.cxx/
+android/app/.cxx/
+android/.externalNativeBuild/
+android/app/.externalNativeBuild/
+android/captures/
+android/app/debug/
+android/app/profile/
+android/app/release/
+
+# 本機簽署設定與私鑰
+android/key.properties
+*.jks
+*.keystore
+
+# IDE 與作業系統產物
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+
+# pubspec.lock、Gradle wrapper、App 圖示與文件圖片應保留在版本控制中。
