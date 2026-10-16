@@ -63,8 +63,6 @@ object MusicWidgetRenderer {
             asset.draw(canvas)
             views.setImageViewBitmap(id, bitmap)
         }
-        icon(R.id.music_icon, R.drawable.ic_music)
-        Artwork.bitmap?.let { views.setImageViewBitmap(R.id.music_icon, it) }
         icon(R.id.previous, R.drawable.ic_previous)
         icon(R.id.next, R.drawable.ic_next)
         icon(R.id.toggle, if (playing) R.drawable.ic_pause else R.drawable.ic_play)
@@ -127,18 +125,38 @@ object MusicWidgetRenderer {
             val options = manager.getAppWidgetOptions(id)
             val width = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 300).coerceIn(180, 600)
             val height = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 380).coerceIn(110, 1000)
+            val header = WidgetHeaderLayout.forWidth(width)
+            val widgetViews = views.clone()
+            widgetViews.setViewVisibility(R.id.music_icon,
+                if (header.cover > 0) android.view.View.VISIBLE else android.view.View.GONE)
+            widgetViews.setViewLayoutWidth(R.id.music_icon, header.cover.toFloat(), android.util.TypedValue.COMPLEX_UNIT_DIP)
+            widgetViews.setViewLayoutHeight(R.id.music_icon, header.cover.toFloat(), android.util.TypedValue.COMPLEX_UNIT_DIP)
+            widgetViews.setViewLayoutHeight(R.id.header, header.height.toFloat(), android.util.TypedValue.COMPLEX_UNIT_DIP)
+            widgetViews.setViewLayoutHeight(R.id.header_controls, header.buttonHeight.toFloat(), android.util.TypedValue.COMPLEX_UNIT_DIP)
+            if (header.cover > 0) {
+                // 與右側兩列上下對齊；每次明確設定圖片或佔位圖，避免留下舊狀態。
+                widgetViews.setImageViewBitmap(R.id.music_icon,
+                    WidgetArtwork.render(context, Artwork.bitmap, foreground))
+            }
+            widgetViews.setViewLayoutMargin(R.id.header_content, RemoteViews.MARGIN_START,
+                header.gap.toFloat(), android.util.TypedValue.COMPLEX_UNIT_DIP)
+            val padding = (header.buttonPadding * context.resources.displayMetrics.density).toInt()
+            listOf(R.id.shuffle, R.id.previous, R.id.toggle, R.id.next, R.id.repeat).forEach {
+                widgetViews.setViewPadding(it, padding, padding, padding, padding)
+                widgetViews.setViewLayoutHeight(it, header.buttonHeight.toFloat(), android.util.TypedValue.COMPLEX_UNIT_DIP)
+            }
             val background = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
             val color = if (dark) 24 else 248
             val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
                 this.color = Color.argb((opacity * 255).toInt(), color, color, color)
             }
             Canvas(background).drawRoundRect(RectF(0f, 0f, width.toFloat(), height.toFloat()), 28f, 28f, paint)
-            views.setImageViewBitmap(R.id.background, background)
+            widgetViews.setImageViewBitmap(R.id.background, background)
             val adapter = Intent(context, QueueWidgetService::class.java).apply {
                 data = android.net.Uri.parse("musicbridge://queue/$id")
             }
-            views.setRemoteAdapter(R.id.queue, adapter)
-            manager.updateAppWidget(id, views)
+            widgetViews.setRemoteAdapter(R.id.queue, adapter)
+            manager.updateAppWidget(id, widgetViews)
             manager.notifyAppWidgetViewDataChanged(id, R.id.queue)
         }
     }

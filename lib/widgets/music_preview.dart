@@ -108,77 +108,102 @@ class _PreviewHeader extends StatelessWidget {
   final _PreviewPalette palette;
   final Uint8List? artwork;
   @override
-  Widget build(BuildContext context) => Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _PreviewArtwork(bytes: artwork),
-          const SizedBox(width: 12),
-          // Row 裡的 Expanded 取得扣除封面後的剩餘寬度，長歌名才知道要在哪裡截斷。
-          Expanded(
-              child: SizedBox(
-                  height: _headerExtent,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 設定預覽是靜態示意；桌面跑馬燈設定在 music_widget.xml 的 title。
-                      Text(snapshot.title ?? 'リナリア',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontSize: 18 * _fontScale,
-                              height: 1.2,
-                              color: palette.foreground,
-                              fontWeight: FontWeight.w600)),
-                      Text(snapshot.artist ?? 'まるりとりゅうが',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              fontSize: 14 * _fontScale,
-                              height: 1.2,
-                              color: palette.secondary)),
-                      // Spacer 消耗剩下的垂直空間，讓控制列貼齊封面底部。
-                      const Spacer(),
-                      SizedBox(
-                          height: 48,
-                          child: Row(children: [
-                            Expanded(
-                                child: Center(
-                                    child: ShuffleModeIcon(
-                                        mode: snapshot.shuffle, size: 16.72))),
-                            const Expanded(
-                                child: Center(
-                                    child: Icon(Icons.skip_previous,
-                                        size: 16.72))),
-                            Expanded(
-                                child: Center(
-                                    child: Icon(
-                                        snapshot.playing
-                                            ? Icons.pause
-                                            : Icons.play_arrow,
-                                        size: 21.28))),
-                            const Expanded(
-                                child: Center(
-                                    child: Icon(Icons.skip_next, size: 16.72))),
-                            Expanded(
-                                child: Center(
-                                    child: PlaybackModeIcon(
-                                        mode: snapshot.repeat, size: 16.72))),
-                          ])),
-                    ],
-                  ))),
-        ],
-      );
+  Widget build(BuildContext context) =>
+      LayoutBuilder(builder: (context, constraints) {
+        final width = constraints.maxWidth + 32;
+        final compact = width < 340;
+        final height = compact ? 76.0 : _headerExtent;
+        final cover = width >= 260 ? height : 0.0;
+        final gap = cover == 0
+            ? 0.0
+            : compact
+                ? 8.0
+                : 12.0;
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (cover > 0) ...[
+              _PreviewArtwork(bytes: artwork, extent: cover),
+              SizedBox(width: gap),
+            ],
+            // Row 裡的 Expanded 取得扣除封面後的剩餘寬度，長歌名才知道要在哪裡截斷。
+            Expanded(
+                child: SizedBox(
+                    height: height,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 設定預覽是靜態示意；桌面跑馬燈設定在 music_widget.xml 的 title。
+                        Text(snapshot.title ?? 'リナリア',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontSize: 18 * _fontScale,
+                                height: 1.2,
+                                color: palette.foreground,
+                                fontWeight: FontWeight.w600)),
+                        Text(snapshot.artist ?? 'まるりとりゅうが',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontSize: 14 * _fontScale,
+                                height: 1.2,
+                                color: palette.secondary)),
+                        // Spacer 消耗剩下的垂直空間，讓控制列貼齊封面底部。
+                        const Spacer(),
+                        SizedBox(
+                            height: compact ? 40 : 48,
+                            child: Row(children: [
+                              Expanded(
+                                  child: Center(
+                                      child: ShuffleModeIcon(
+                                          mode: snapshot.shuffle,
+                                          size: 16.72))),
+                              const Expanded(
+                                  child: Center(
+                                      child: Icon(Icons.skip_previous,
+                                          size: 16.72))),
+                              Expanded(
+                                  child: Center(
+                                      child: Icon(
+                                          snapshot.playing
+                                              ? Icons.pause
+                                              : Icons.play_arrow,
+                                          size: 21.28))),
+                              const Expanded(
+                                  child: Center(
+                                      child:
+                                          Icon(Icons.skip_next, size: 16.72))),
+                              Expanded(
+                                  child: Center(
+                                      child: PlaybackModeIcon(
+                                          mode: snapshot.repeat, size: 16.72))),
+                            ])),
+                      ],
+                    ))),
+          ],
+        );
+      });
 }
 
 class _PreviewArtwork extends StatelessWidget {
-  const _PreviewArtwork({this.bytes});
+  const _PreviewArtwork({this.bytes, required this.extent});
   final Uint8List? bytes;
+  final double extent;
+
+  Widget _placeholder(BuildContext context) => Container(
+      decoration: BoxDecoration(
+          color: (IconTheme.of(context).color ?? Colors.white)
+              .withValues(alpha: 40 / 255),
+          borderRadius: BorderRadius.circular(extent * 24 / 256)),
+      child: Center(child: Icon(Icons.music_note, size: extent * .375)));
+
   @override
   Widget build(BuildContext context) => SizedBox(
-      width: _headerExtent,
-      height: _headerExtent,
+      width: extent,
+      height: extent,
       child: bytes == null
-          ? const Icon(Icons.music_note_outlined, size: 40)
+          ? _placeholder(context)
           : ClipRRect(
               borderRadius: BorderRadius.circular(6),
               child: Image.memory(bytes!,
@@ -186,7 +211,7 @@ class _PreviewArtwork extends StatelessWidget {
                   gaplessPlayback: false,
                   // 圖片損壞也使用音符佔位，不讓整個預覽顯示錯誤畫面。
                   errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.music_note_outlined, size: 40))));
+                      _placeholder(context))));
 }
 
 class _PreviewSongRow extends StatelessWidget {

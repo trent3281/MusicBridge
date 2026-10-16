@@ -78,7 +78,12 @@ void main() {
     await tester.scrollUntilVisible(find.text('外觀預覽 · 示意背景'), -250);
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
-    expect(find.byIcon(Icons.music_note_outlined), findsOneWidget);
+    // 窄版預覽縮小封面，優先保留五個控制鍵的空間。
+    expect(tester.widget<Icon>(find.byIcon(Icons.music_note)).size,
+        lessThan(88 * .375));
+    expect(find.byIcon(Icons.skip_previous), findsOneWidget);
+    expect(find.byIcon(Icons.skip_next), findsOneWidget);
+    expect(find.byIcon(Icons.play_arrow), findsWidgets);
     expect(tester.widget<Text>(find.text('リナリア')).style!.fontSize, 18 * .9);
     await tester.pumpWidget(const SizedBox());
   });
