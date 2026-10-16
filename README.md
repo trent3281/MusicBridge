@@ -53,7 +53,7 @@ Flutter 畫面與桌面小工具是兩套 UI。設定頁預覽是 Flutter；桌�
 - 儲存套用至所有 MusicBridge 小工具，取消只還原設定草稿。
 - Samsung Music 關閉後保留最後清單；點歌曲可背景恢復連線後播放，不建立 Activity 視窗。
 - 外部播放器狀態變動透過媒體回呼、通知訊號與短週期補查更新桌面。
-- 桌面最多顯示前 150 首以控制 Binder 傳輸大小；設定頁只保留外觀預覽與調整。
+- 桌面顯示 Samsung Music 公開的完整播放佇列，不限制歌曲筆數；清單透過 RemoteViewsService 提供歌曲列，載入與預取由 Launcher 管理。
 
 ## 下載與安裝
 

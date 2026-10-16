@@ -21,6 +21,8 @@
    android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode">
    <meta-data android:name="io.flutter.embedding.android.NormalTheme" android:resource="@style/NormalTheme"/>
   </activity>
+  <service android:name=".QueueWidgetService" android:exported="false"
+   android:permission="android.permission.BIND_REMOTEVIEWS"/>
   <meta-data android:name="flutterEmbedding" android:value="2"/>
  </application>
 </manifest>

@@ -23,8 +23,10 @@
     </LinearLayout>
     <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:layout_marginTop="10dp">
       <!-- Launcher 透過 RemoteCollectionItems 接收歌曲列；Flutter ListView 不參與這個桌面清單。 -->
-      <ListView android:id="@+id/queue" android:layout_width="match_parent" android:layout_height="match_parent" android:divider="@android:color/transparent" android:dividerHeight="0dp" android:scrollbars="none" />
+      <ListView android:id="@+id/queue" android:layout_width="match_parent" android:layout_height="match_parent" android:divider="@android:color/transparent" android:dividerHeight="0dp" android:scrollbars="vertical" android:verticalScrollbarPosition="right" android:scrollbarStyle="insideInset" android:scrollbarSize="24dp" android:fadeScrollbars="true" android:scrollbarDefaultDelayBeforeFade="700" android:scrollbarFadeDuration="250" android:scrollbarThumbVertical="@drawable/queue_scroll_thumb" android:scrollbarTrackVertical="@drawable/queue_scroll_track" />
       <TextView android:id="@+id/empty" android:layout_width="match_parent" android:layout_height="match_parent" android:textSize="13sp" android:gravity="center" android:textColor="#CCFFFFFF" />
     </FrameLayout>
+    <!-- 總數固定在底部，不隨歌曲清單捲動。 -->
+    <TextView android:id="@+id/queue_count" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:gravity="end" android:textSize="11sp" android:includeFontPadding="false" android:textColor="#CCFFFFFF" />
   </LinearLayout>
 </FrameLayout>

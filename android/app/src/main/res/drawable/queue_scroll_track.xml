@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 外層維持 24dp，避免軌道寬度使系統的滑桿最小長度縮小。 -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android" android:insetLeft="11dp" android:insetRight="11dp">
+    <shape><solid android:color="#22FFFFFF"/><corners android:radius="1dp"/><size android:width="2dp"/></shape>
+</inset>

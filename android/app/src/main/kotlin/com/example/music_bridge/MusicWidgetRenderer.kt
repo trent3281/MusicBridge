@@ -46,6 +46,11 @@ object MusicWidgetRenderer {
         views.setTextColor(R.id.title, foreground)
         views.setTextColor(R.id.artist, secondary)
         views.setTextColor(R.id.empty, secondary)
+        val songCount = (state["queue"] as? List<*>)?.size ?: 0
+        views.setTextViewText(R.id.queue_count, "$songCount 首")
+        views.setTextColor(R.id.queue_count, secondary)
+        views.setContentDescription(R.id.queue_count,
+            if (state["cached"] == true) "上次播放清單，共 $songCount 首" else "目前播放清單，共 $songCount 首")
         // 圖示先畫成帶顏色的 Bitmap，避免不同 Launcher 對 tint 支援不一致。
         fun icon(id: Int, drawable: Int, color: Int = foreground) {
             val asset = context.getDrawable(drawable)!!.mutate()
@@ -94,37 +99,8 @@ object MusicWidgetRenderer {
             views.setOnClickPendingIntent(view, if (!connected && command == "toggle") open
                 else PendingIntent.getBroadcast(context, view, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
         }
-        val items = RemoteViews.RemoteCollectionItems.Builder().setHasStableIds(true).setViewTypeCount(1)
-        // RemoteViews 不是即時 Flutter 元件樹，而是傳給 Launcher 的畫面描述。
-        // 清單每列也要建立自己的 RemoteViews，再一次交給系統。
-        @Suppress("UNCHECKED_CAST")
-        val queue = state["queue"] as List<Map<String, Any?>>
-        // Binder 是跨程序傳輸通道；限制顯示筆數，避免資料過大導致整個 Widget 更新失敗。
-        val indicator = Bitmap.createBitmap(60, 60, Bitmap.Config.ARGB_8888)
-        context.getDrawable(R.drawable.ic_queue_play)!!.mutate().apply {
-            setTint(accent)
-            setBounds(0, 0, 60, 60)
-            draw(Canvas(indicator))
-        }
-        queue.take(150).forEach { item ->
-            val row = RemoteViews(context.packageName, R.layout.queue_row)
-            val active = item["id"] == state["activeId"]
-            row.setImageViewBitmap(R.id.row_indicator, indicator)
-            row.setViewVisibility(R.id.row_indicator, if (active) android.view.View.VISIBLE else android.view.View.INVISIBLE)
-            row.setTextViewText(R.id.row_title, (item["title"] as String? ?: "未命名歌曲").take(200))
-            row.setTextViewText(R.id.row_artist, (item["artist"] as String? ?: "").take(200))
-            row.setTextColor(R.id.row_title, if (active) accent else foreground)
-            row.setTextColor(R.id.row_artist, if (active) accent else secondary)
-            row.setTextViewTextSize(R.id.row_title, android.util.TypedValue.COMPLEX_UNIT_SP, 17f * fontScale)
-            row.setTextViewTextSize(R.id.row_artist, android.util.TypedValue.COMPLEX_UNIT_SP, 14f * fontScale)
-            row.setOnClickFillInIntent(R.id.row, Intent()
-                .putExtra("mediaId", item["mediaId"] as String?)
-                .putExtra("uri", item["uri"] as String?)
-                .putExtra("title", item["title"] as String?)
-                .putExtra("artist", item["artist"] as String?))
-            items.addItem(item["id"] as Long, row)
-        }
-        views.setRemoteAdapter(R.id.queue, items.build())
+        // 完整佇列留在 App 程序，Launcher 透過服務取得歌曲列。
+        QueueWidgetData.publish(state, foreground, secondary, accent)
         val template = Intent(context, MusicWidget::class.java).setAction("com.example.music_bridge.SELECT")
         // 範本固定送給自己的廣播接收器；每列 fill-in Intent 補上那一首的身分。
         // MUTABLE 是讓系統能填入列資料，並非讓點歌去啟動 Activity。
@@ -151,7 +127,12 @@ object MusicWidgetRenderer {
             }
             Canvas(background).drawRoundRect(RectF(0f, 0f, width.toFloat(), height.toFloat()), 28f, 28f, paint)
             views.setImageViewBitmap(R.id.background, background)
+            val adapter = Intent(context, QueueWidgetService::class.java).apply {
+                data = android.net.Uri.parse("musicbridge://queue/$id")
+            }
+            views.setRemoteAdapter(R.id.queue, adapter)
             manager.updateAppWidget(id, views)
+            manager.notifyAppWidgetViewDataChanged(id, R.id.queue)
         }
     }
 }
