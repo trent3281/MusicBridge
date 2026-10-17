@@ -14,7 +14,7 @@ class PlaybackMemory(initial: Map<String, Any?> = emptyMap()) {
 
     fun record(live: Map<String, Any?>, now: Long): Boolean {
         val queue = live["queue"] as? List<*> ?: return false
-        if (live["connected"] != true || queue.isEmpty()) return false
+        if (live["connected"] != true || live["cached"] == true || queue.isEmpty()) return false
         val content = listOf("title", "artist", "queue", "repeat", "shuffle")
             .associateWith { key ->
                 val value = live[key]

@@ -97,15 +97,18 @@ object MusicWidgetRenderer {
         listOf(Triple(R.id.shuffle, "shuffle", 2097152L), Triple(R.id.previous, "previous", 16L), Triple(R.id.next, "next", 32L),
             Triple(R.id.toggle, "toggle", (if (playing) 2L else 4L) or 512L),
             Triple(R.id.repeat, "repeat", 262144L)).forEach { (view, command, flag) ->
-            val enabled = actions and flag != 0L || (!connected && command == "toggle")
+            // 離線時允許發出背景連線請求；重新連線後仍以即時動作旗標驗證。
+            val enabled = actions and flag != 0L ||
+                ((!connected || state["connecting"] == true) && state["permission"] == true)
             views.setBoolean(view, "setEnabled", enabled)
             views.setFloat(view, "setAlpha", if (enabled) 1f else .3f)
-            val intent = Intent(context, MusicWidget::class.java).setAction("com.example.music_bridge.CONTROL").putExtra("command", command)
-            views.setOnClickPendingIntent(view, if (!connected && command == "toggle") open
-                else PendingIntent.getBroadcast(context, view, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
+            val intent = Intent(context, MusicWidget::class.java).setAction("com.example.music_bridge.CONTROL")
+                .putExtra("command", if (!connected && command == "toggle") "resume" else command)
+            views.setOnClickPendingIntent(view,
+                PendingIntent.getBroadcast(context, view, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE))
         }
         // 完整佇列留在 App 程序，Launcher 透過服務取得歌曲列。
-        QueueWidgetData.publish(state, foreground, secondary, accent)
+        val queueChanged = QueueWidgetData.publish(state, foreground, secondary, accent)
         val template = Intent(context, MusicWidget::class.java).setAction("com.example.music_bridge.SELECT")
         // 範本固定送給自己的廣播接收器；每列 fill-in Intent 補上那一首的身分。
         // MUTABLE 是讓系統能填入列資料，並非讓點歌去啟動 Activity。
@@ -119,7 +122,6 @@ object MusicWidgetRenderer {
         })
         views.setContentDescription(R.id.header, if (state["cached"] == true)
             context.getString(R.string.cached_header) else context.getString(R.string.open_music))
-        if (!connected) views.setContentDescription(R.id.toggle, context.getString(R.string.open_music))
         ids.forEach { id ->
             // 每個 Widget 尺寸可能不同；依 Launcher 提供的尺寸畫圓角透明背景。
             val options = manager.getAppWidgetOptions(id)
@@ -157,7 +159,8 @@ object MusicWidgetRenderer {
             }
             widgetViews.setRemoteAdapter(R.id.queue, adapter)
             manager.updateAppWidget(id, widgetViews)
-            manager.notifyAppWidgetViewDataChanged(id, R.id.queue)
+            // 圖示或連線狀態變更不代表歌曲列變更，避免每次按鍵都清空重載清單。
+            if (queueChanged) manager.notifyAppWidgetViewDataChanged(id, R.id.queue)
         }
     }
 }

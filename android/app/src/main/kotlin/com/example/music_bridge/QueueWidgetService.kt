@@ -1,6 +1,8 @@
 package com.example.music_bridge
 
 import android.content.Intent
+import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Color
 import android.view.View
 import android.widget.RemoteViews
@@ -24,11 +26,23 @@ object QueueWidgetData {
     @Volatile var current = QueueWidgetSnapshot()
         private set
 
-    fun publish(state: Map<String, Any?>, foreground: Int, secondary: Int, accent: Int) {
+    fun publish(state: Map<String, Any?>, foreground: Int, secondary: Int, accent: Int): Boolean {
         @Suppress("UNCHECKED_CAST")
         val songs = state["queue"] as? List<Map<String, Any?>> ?: emptyList()
-        current = QueueWidgetSnapshot(songs.map { it.toMap() },
+        val next = QueueWidgetSnapshot(songs.map { it.toMap() },
             (state["activeId"] as? Number)?.toLong(), foreground, secondary, accent)
+        if (next == current) return false
+        current = next
+        return true
+    }
+
+    fun initialize(context: Context) {
+        val mode = context.getSharedPreferences("widget", Context.MODE_PRIVATE).getString("mode", "dark")
+        val dark = mode == "dark" || (mode == "system" &&
+            context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES)
+        publish(Bridge.snapshot(), if (dark) Color.WHITE else Color.rgb(25, 25, 28),
+            if (dark) Color.rgb(205, 205, 210) else Color.rgb(36, 36, 40),
+            if (dark) Color.rgb(170, 205, 255) else Color.rgb(36, 92, 180))
     }
 }
 
@@ -37,7 +51,8 @@ class QueueWidgetService : RemoteViewsService() {
         super.onCreate()
         // 程序被回收後，也能從播放快取重建清單，不要求使用者先開 App。
         Bridge.init(applicationContext)
-        MusicWidget.updateAll(applicationContext)
+        // 只準備資料，不回頭更新 Widget；否則服務重建會再次觸發清單刷新。
+        QueueWidgetData.initialize(applicationContext)
     }
 
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory = QueueFactory()

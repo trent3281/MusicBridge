@@ -31,6 +31,8 @@ object Bridge {
     private var lastProbe = ""
     private val history = java.util.ArrayDeque<String>()
     private var monitoring = false
+    private var sessionConnectedAt = 0L
+    private val transitionExpired = Runnable { changed() }
     private val poll = object : Runnable {
         override fun run() {
             if (permission()) connect()
@@ -156,10 +158,13 @@ object Bridge {
             if (controller?.sessionToken != token) {
                 detach()
                 if (token != null) {
+                    sessionConnectedAt = android.os.SystemClock.elapsedRealtime()
                     controller = MediaControllerCompat(context, token)
                     controller?.registerCallback(callback, handler)
                     Artwork.load(context, controller?.metadata)
                     probe("新媒體工作階段")
+                    // 若播放器真的沒有佇列，過渡期結束後仍要顯示真實空清單。
+                    handler.postDelayed(transitionExpired, 3000)
                 }
                 changed()
             }
@@ -169,6 +174,8 @@ object Bridge {
     // 先存最後有效清單，再清掉連線狀態；快取不是操作權或 session token。
     private fun detach() {
         runCatching { PlaybackCache.record(context, snapshot()) }
+        handler.removeCallbacks(transitionExpired)
+        sessionConnectedAt = 0L
         delayedProbes.forEach { handler.removeCallbacks(it) }
         delayedProbes.clear()
         observedQueue = emptyList()
@@ -207,6 +214,7 @@ object Bridge {
             "title" to metadata?.getString(MediaMetadataCompat.METADATA_KEY_TITLE),
             "artist" to metadata?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST),
             "playing" to (state?.state == PlaybackStateCompat.STATE_PLAYING),
+            "playbackState" to (state?.state ?: PlaybackStateCompat.STATE_NONE),
             "actions" to (state?.actions ?: 0L),
             "activeId" to (state?.activeQueueItemId ?: -1L),
             "repeat" to observedRepeat,
@@ -230,7 +238,12 @@ object Bridge {
                     "artist" to it.description.subtitle?.toString())
             })
         )
-        return if (c == null) live + (PlaybackCache.offline(permission()) ?: emptyMap()) else live
+        val saved = PlaybackCache.offline(permission())
+        if (c == null) return live + (saved ?: emptyMap())
+        val connecting = android.os.SystemClock.elapsedRealtime() - sessionConnectedAt < 3000 &&
+            (observedQueue.isEmpty() || state == null || !c.isSessionReady ||
+                metadata?.getString(MediaMetadataCompat.METADATA_KEY_TITLE).isNullOrBlank())
+        return PlaybackPresentation.merge(live, saved, connecting)
     }
     private fun bundleDetails(bundle: android.os.Bundle?): Map<String, String> =
         runCatching { bundle?.keySet()?.associateWith { key ->
@@ -253,6 +266,43 @@ object Bridge {
         followUp("重新連線點歌")
         return true
     }
+    /** 等待背景恢復媒體連線後，從播放器自己保留的目前位置繼續播放。 */
+    fun resumePlayback(): Boolean {
+        connect()
+        val c = controller ?: return false
+        val state = c.playbackState ?: return false
+        if (state.state == PlaybackStateCompat.STATE_STOPPED || state.state == PlaybackStateCompat.STATE_NONE) return false
+        // 媒體按鍵可能已經成功開始播放，不再次切換為暫停。
+        if (state.state == PlaybackStateCompat.STATE_PLAYING) return true
+        if (state.actions and (PlaybackStateCompat.ACTION_PLAY or PlaybackStateCompat.ACTION_PLAY_PAUSE) == 0L) return false
+        c.transportControls.play()
+        followUp("背景恢復播放")
+        return true
+    }
+
+    /** 背景服務尚未完成初始化時先等候，連線就緒後才驗證及送出一次操作。 */
+    fun backgroundCommand(action: String): Boolean {
+        connect()
+        val c = controller ?: return false
+        if (!c.isSessionReady || c.playbackState == null) return false
+        if (c.playbackState?.state in listOf(PlaybackStateCompat.STATE_STOPPED, PlaybackStateCompat.STATE_NONE)) return false
+        // 暫停且剛恢復的 Samsung session 可能接受 skip 指令卻沒有切歌。
+        // 用即時佇列定位目標，沿用清單點歌使用的公開 queue-item 操作；不要求播放。
+        if (action in listOf("previous", "next") &&
+            (if (observedMode >= 0) observedMode else c.shuffleMode) == PlaybackStateCompat.SHUFFLE_MODE_NONE) {
+            val queue = c.queue.orEmpty()
+            val index = queue.indexOfFirst { it.queueId == c.playbackState?.activeQueueItemId }
+            if (index < 0 || queue.isEmpty()) return false
+            val target = Math.floorMod(index + if (action == "next") 1 else -1, queue.size)
+            c.transportControls.skipToQueueItem(queue[target].queueId)
+            followUp("背景佇列切歌：$action")
+            return true
+        }
+        command(action)
+        followUp("背景控制：$action")
+        return true
+    }
+
     fun command(action: String, id: Long? = null) {
         if (action == "inspect") { inspect(); return }
         connect()
@@ -264,8 +314,9 @@ object Bridge {
             "shuffle" -> {
                 requireAction(PlaybackStateCompat.ACTION_SET_SHUFFLE_MODE)
                 check(c.isSessionReady) { context.getString(R.string.session_wait) }
-                val target = if (c.shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_ALL ||
-                    c.shuffleMode == PlaybackStateCompat.SHUFFLE_MODE_GROUP)
+                val current = if (observedMode >= 0) observedMode else c.shuffleMode
+                val target = if (current == PlaybackStateCompat.SHUFFLE_MODE_ALL ||
+                    current == PlaybackStateCompat.SHUFFLE_MODE_GROUP)
                     PlaybackStateCompat.SHUFFLE_MODE_NONE else PlaybackStateCompat.SHUFFLE_MODE_ALL
                 observation.request(target, c.queue.orEmpty().map { it.queueId }, android.os.SystemClock.elapsedRealtime())
                 controls.setShuffleMode(target)
@@ -289,7 +340,7 @@ object Bridge {
             "repeat" -> {
                 requireAction(PlaybackStateCompat.ACTION_SET_REPEAT_MODE)
                 // Samsung modes: repeat one -> repeat all -> play queue once.
-                val next = when (c.repeatMode) {
+                val next = when (if (observedRepeat >= 0) observedRepeat else c.repeatMode) {
                     PlaybackStateCompat.REPEAT_MODE_ONE -> PlaybackStateCompat.REPEAT_MODE_ALL
                     PlaybackStateCompat.REPEAT_MODE_ALL, PlaybackStateCompat.REPEAT_MODE_GROUP -> PlaybackStateCompat.REPEAT_MODE_NONE
                     else -> PlaybackStateCompat.REPEAT_MODE_ONE

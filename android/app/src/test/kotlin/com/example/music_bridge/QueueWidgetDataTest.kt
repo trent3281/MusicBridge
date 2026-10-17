@@ -4,6 +4,13 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class QueueWidgetDataTest {
+    @Test fun unchangedRowsDoNotTriggerACollectionReload() {
+        val state = mapOf<String, Any?>("queue" to listOf(mapOf("id" to 9L, "title" to "Song")),
+            "activeId" to 9L)
+        QueueWidgetData.publish(state, 1, 2, 3)
+        assertFalse(QueueWidgetData.publish(state + mapOf("repeat" to 2), 1, 2, 3))
+        assertTrue(QueueWidgetData.publish(state + mapOf("activeId" to 10L), 1, 2, 3))
+    }
     @Test fun retainsEntireQueueAndLateActiveSong() {
         val songs = (0 until 3000).map { index ->
             mapOf<String, Any?>("id" to index.toLong(), "mediaId" to "song-$index",

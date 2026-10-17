@@ -34,6 +34,18 @@ class MusicWidget : AppWidgetProvider() {
         }
         if (intent.action == Intent.ACTION_CONFIGURATION_CHANGED || intent.action == Intent.ACTION_LOCALE_CHANGED) updateAll(context)
         if (intent.action == "com.example.music_bridge.CONTROL") {
+            val command = intent.getStringExtra("command")
+            if (command in listOf("previous", "next", "repeat", "shuffle")) {
+                val result = goAsync()
+                BackgroundPlayback.command(context, command!!) { result.finish() }
+                return
+            }
+            Bridge.init(context)
+            if (command == "resume" || (command == "toggle" && Bridge.snapshot()["playing"] != true)) {
+                val result = goAsync()
+                BackgroundPlayback.resume(context) { result.finish() }
+                return
+            }
             Bridge.init(context)
             try { Bridge.command(intent.getStringExtra("command") ?: "", if (intent.hasExtra("id")) intent.getLongExtra("id", -1) else null) }
             catch (e: Exception) { Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show() }
